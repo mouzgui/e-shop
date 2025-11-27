@@ -23,7 +23,7 @@ import { createOrder } from "./api/orders";
 export async function processOrder(orderData, cartItems) {
   "use server";
 
-  console.log("Processing Order for:", orderData.email);
+
 
   const result = await createOrder(orderData, cartItems);
 

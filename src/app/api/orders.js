@@ -53,3 +53,18 @@ export async function getOrderById(id) {
         return null;
     }
 }
+export async function getOrders(email) {
+    try {
+        const params = {
+            per_page: 20,
+        };
+        if (email) {
+            params.search = email; // WooCommerce allows searching orders by email
+        }
+        const response = await api.get("orders", params);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return [];
+    }
+}

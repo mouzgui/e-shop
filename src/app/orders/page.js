@@ -1,14 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { Package, Truck } from "lucide-react";
-import { useStore } from "@/context/StoreContext";
+import { Package, Truck, AlertCircle } from "lucide-react";
+import useSWR from "swr";
 import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge"; // Ensure you have this component from previous refactor
+import Badge from "@/components/ui/Badge";
 import { theme } from "@/utils/theme";
 
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
 export default function OrdersPage() {
-  const { orders } = useStore();
+  // In a real app, we'd pass the user's email or ID. 
+  // For now, we fetch all orders (or filter by a hardcoded email if we had auth)
+  const { data: orders = [], isLoading, error } = useSWR("/api/orders", fetcher);
+
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading orders...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">Failed to load orders</div>;
 
   return (
     <div className={`${theme.layout.container} py-12 animate-fade-in`}>
@@ -52,7 +59,7 @@ export default function OrdersPage() {
                       Date Placed
                     </p>
                     <p className="text-sm font-medium text-gray-900">
-                      {new Date(order.date).toLocaleDateString()}
+                      {new Date(order.date_created).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
@@ -60,12 +67,17 @@ export default function OrdersPage() {
                       Total Amount
                     </p>
                     <p className="text-sm font-medium text-gray-900">
-                      ${order.total.toFixed(2)}
+                      ${parseFloat(order.total).toFixed(2)}
                     </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">
+                      Status
+                    </p>
+                    <Badge status={order.status} />
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Badge status={order.status} />
                   <Button
                     variant="secondary"
                     className="px-4 py-2 text-sm h-auto"
@@ -78,27 +90,34 @@ export default function OrdersPage() {
               <div className="p-6">
                 <div className="flow-root">
                   <ul className="-my-6 divide-y divide-gray-100">
-                    {order.items.map((item) => (
+                    {order.line_items.map((item) => (
                       <li key={item.id} className="flex py-6">
-                        <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="h-full w-full object-cover object-center"
-                          />
+                        {/* WooCommerce line items don't always have images directly, 
+                            we might need to fetch product details or use a placeholder if image is missing 
+                            For now, using a placeholder or if we enhanced the API to include images */}
+                        <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                          {item.image?.src ? (
+                            <img
+                              src={item.image.src}
+                              alt={item.name}
+                              className="h-full w-full object-cover object-center"
+                            />
+                          ) : (
+                            <Package className="w-8 h-8 text-gray-300" />
+                          )}
                         </div>
                         <div className="ml-4 flex flex-1 flex-col">
                           <div>
                             <div className="flex justify-between text-base font-medium text-gray-900">
                               <h3>{item.name}</h3>
-                              <p className="ml-4">${item.price}</p>
+                              <p className="ml-4">${parseFloat(item.total).toFixed(2)}</p>
                             </div>
-                            <p className="mt-1 text-sm text-gray-500">
+                            {/* <p className="mt-1 text-sm text-gray-500">
                               {item.category}
-                            </p>
+                            </p> */}
                           </div>
                           <div className="flex flex-1 items-end justify-between text-sm">
-                            <p className="text-gray-500">Qty {item.qty}</p>
+                            <p className="text-gray-500 font-medium">Qty: {item.quantity}</p>
                           </div>
                         </div>
                       </li>
@@ -109,8 +128,8 @@ export default function OrdersPage() {
               <div className="bg-gray-50 px-6 py-4 flex items-center text-sm text-gray-500">
                 <Truck className="w-4 h-4 mr-2" />
                 Delivery Status:{" "}
-                <span className="font-medium text-gray-900 ml-1">
-                  On the way to {order.shipping.city}
+                <span className="font-medium text-gray-900 ml-1 capitalize">
+                  {order.status}
                 </span>
               </div>
             </div>

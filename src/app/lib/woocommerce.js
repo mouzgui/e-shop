@@ -1,6 +1,6 @@
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 
-console.log("WooCommerceRestApi import:", WooCommerceRestApi);
+
 // Sanitize URL to remove potential duplicate API path and trailing slashes
 const cleanUrl = (url) => {
     if (!url) return "";
