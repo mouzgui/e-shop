@@ -26,10 +26,7 @@ export default function ProductDetailClient({ product }) {
   const [selectedImage, setSelectedImage] = useState(0);
 
   const handleAddToCart = () => {
-    // Add product multiple times based on quantity
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-    }
+    addToCart(product, quantity);
   };
 
   const handleBuyNow = () => {

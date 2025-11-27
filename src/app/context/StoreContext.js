@@ -18,17 +18,20 @@ export const StoreProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const addToCart = useCallback(
-    (product) => {
+    (product, quantity = 1) => {
       setCart((prev) => {
         const existing = prev.find((item) => item.id === product.id);
         if (existing) {
           return prev.map((item) =>
-            item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+            item.id === product.id ? { ...item, qty: item.qty + quantity } : item
           );
         }
-        return [...prev, { ...product, qty: 1 }];
+        return [...prev, { ...product, qty: quantity }];
       });
-      addToast(`Added ${product.name} to cart`);
+      const message = quantity > 1
+        ? `Added ${quantity} ${product.name}s to cart`
+        : `Added ${product.name} to cart`;
+      addToast(message);
     },
     [addToast]
   );
