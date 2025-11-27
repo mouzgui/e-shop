@@ -18,14 +18,20 @@ export async function submitContactForm(formData) {
   return { success: true, message: "Message sent successfully!" };
 }
 
-export async function processOrder(orderData) {
+import { createOrder } from "./api/orders";
+
+export async function processOrder(orderData, cartItems) {
   "use server";
-  await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  console.log("Processing Order:", orderData);
+  console.log("Processing Order for:", orderData.email);
 
-  // Revalidate orders path so the user sees the new order in their history immediately
-  revalidatePath("/orders");
+  const result = await createOrder(orderData, cartItems);
 
-  return { success: true, orderId: `ORD-${Math.floor(Math.random() * 10000)}` };
+  if (result.success) {
+    // Revalidate orders path so the user sees the new order in their history immediately
+    revalidatePath("/orders");
+    return { success: true, orderId: result.orderId };
+  } else {
+    return { success: false, error: result.error };
+  }
 }

@@ -43,7 +43,7 @@ export default function CheckoutPage() {
     };
 
     // 2. Call Server Action (Simulated backend processing)
-    const result = await processOrder(orderDetails);
+    const result = await processOrder(orderDetails, cart);
 
     if (result.success) {
       // 3. Update Client Context (Clear cart, add to history)

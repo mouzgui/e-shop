@@ -1,3 +1,5 @@
+// DEPRECATED: This file is used as fallback/development data only.
+// Real data is now fetched from WooCommerce REST API.
 export const PRODUCTS_DATA = [
   {
     id: 1,
