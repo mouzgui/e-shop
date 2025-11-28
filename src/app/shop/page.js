@@ -18,7 +18,10 @@ function ShopContent() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   // Fetch categories
-  const { data: categories = ["All"] } = useSWR("/api/categories", fetcher);
+  const { data: fetchedCategories = ["All"] } = useSWR("/api/categories", fetcher);
+
+  // Add "Sale" to categories
+  const categories = ["All", "Sale", ...fetchedCategories.filter(c => c !== "All")];
 
   // Fetch products
   // We fetch all products for client-side filtering to match previous behavior
@@ -41,7 +44,7 @@ function ShopContent() {
     } else {
       setActiveCategory("All");
     }
-  }, [searchParams, categories]);
+  }, [searchParams, fetchedCategories]); // Depend on fetchedCategories to update when loaded
 
   const handleCategoryChange = (cat) => {
     setActiveCategory(cat);
@@ -54,8 +57,14 @@ function ShopContent() {
 
   // Client-side filtering
   const filteredProducts = products.filter((p) => {
-    const matchesCategory =
-      activeCategory === "All" || p.category === activeCategory;
+    let matchesCategory = true;
+
+    if (activeCategory === "Sale") {
+      matchesCategory = p.on_sale === true;
+    } else if (activeCategory !== "All") {
+      matchesCategory = p.category === activeCategory;
+    }
+
     const query = searchQuery.toLowerCase();
     const matchesSearch =
       p.name.toLowerCase().includes(query) ||

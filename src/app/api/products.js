@@ -75,3 +75,26 @@ export async function searchProducts(query) {
         return [];
     }
 }
+
+export async function getProductReviews(productId) {
+    try {
+        const response = await api.get("products/reviews", {
+            product: [parseInt(productId)],
+            status: "approved",
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching reviews for product ${productId}:`, error);
+        return [];
+    }
+}
+
+export async function createProductReview(data) {
+    try {
+        const response = await api.post("products/reviews", data);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating review:", error);
+        throw error;
+    }
+}

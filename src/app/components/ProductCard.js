@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Star, Heart, ShoppingBag, Zap } from "lucide-react";
 import { useStore } from "../context/StoreContext";
 import Button from "./ui/Button";
+import StarRating from "./ui/StarRating";
 
 export default function ProductCard({ product }) {
   const router = useRouter();
@@ -40,14 +41,21 @@ export default function ProductCard({ product }) {
         />
 
         {/* Badges / Top Actions */}
-        <div className="absolute top-4 left-4 z-10">
+        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+          {product.on_sale && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white shadow-lg shadow-red-500/20 backdrop-blur-md">
+              Sale
+            </span>
+          )}
           {product.rating >= 4.8 && (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur-sm text-black shadow-sm">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 mr-1" />
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/95 backdrop-blur-md text-black shadow-lg border border-gray-100/50">
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400 mr-1.5" />
               Top Rated
             </span>
           )}
         </div>
+
+
 
         <div className="absolute top-4 right-4 z-10">
           <button
@@ -101,15 +109,19 @@ export default function ProductCard({ product }) {
 
         <div className="mt-auto pt-4 flex items-end justify-between border-t border-gray-50">
           <div>
-            <p className="text-2xl font-bold text-gray-900">
-              ${product.price}
-            </p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-2xl font-bold text-gray-900">
+                ${product.price}
+              </p>
+              {product.on_sale && product.regular_price > product.price && (
+                <p className="text-sm text-gray-400 line-through">
+                  ${product.regular_price}
+                </p>
+              )}
+            </div>
           </div>
           <div className="flex items-center text-sm text-gray-500">
-            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-            <span className="font-medium text-gray-900">{product.rating}</span>
-            <span className="mx-1">·</span>
-            <span>{product.reviews} reviews</span>
+            <StarRating rating={product.rating} size="sm" showCount={false} reviewCount={product.reviews} smartRating={true} />
           </div>
         </div>
       </div>

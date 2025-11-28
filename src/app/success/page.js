@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Copy, ArrowRight, ShoppingBag } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useToast } from "@/context/ToastContext";
+import Confetti from "@/components/ui/Confetti";
 
 export default function SuccessPage() {
   const [isRevealed, setIsRevealed] = useState(false);
@@ -18,6 +19,7 @@ export default function SuccessPage() {
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center p-4 animate-fade-in relative overflow-hidden">
+      <Confetti />
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>

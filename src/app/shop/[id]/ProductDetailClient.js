@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Button from "../../components/ui/Button";
+import ProductReviews from "../../components/ProductReviews";
+import StarRating from "../../components/ui/StarRating";
 
 export default function ProductDetailClient({ product }) {
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
@@ -117,8 +119,8 @@ export default function ProductDetailClient({ product }) {
               </h1>
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 mr-1" />
-                  <span className="font-bold text-yellow-700">{product.rating}</span>
+                  <StarRating rating={product.rating} size="md" reviewCount={product.reviews} />
+                  <span className="font-bold text-yellow-700 ml-2">{product.rating}</span>
                   <span className="text-yellow-600/60 mx-1">/</span>
                   <span className="text-yellow-600 text-sm">5.0</span>
                 </div>
@@ -199,9 +201,12 @@ export default function ProductDetailClient({ product }) {
                 ))}
               </ul>
             </div>
+            {/* Reviews Section */}
+            <ProductReviews productId={product.id} />
           </div>
-        </div>
-      </div>
-    </div>
+        </div >
+      </div >
+    </div >
   );
 }
+
